@@ -15,12 +15,25 @@ export function useSnakeGame() {
     const width = 25;
     const height = 25;
 
+    /** 초기화 핸들러 */
+    const handleReset = () => {
+        setSnake([{x: 5, y: 5}]);
+        setFood({x: 10, y: 10});
+        setScore(0);
+        setIsMoving(false);
+        setGameOver(false);
+        directionRef.current = "right";
+        inputLockedRef.current = false;
+        snakeLengthRef.current = snake.length;
+    };
+
     /** 뱀의 움직임 */
     const moveSnakeHandler = useCallback(() => {
         const {newSnake, newFood, ateFood, gameOver} = moveSnake(snake, directionRef.current, food, width, height);
 
         if (gameOver) {
             setIsMoving(false);
+            setGameOver(true);
             return;
         }
 
@@ -34,7 +47,7 @@ export function useSnakeGame() {
 
     // 다음 위치 계산후 상태 업데이트
     useEffect(() => {
-        if (!isMoving) setIsMoving(true); // 움직임 시작 여부
+        if (!isMoving || gameOver) return; // 움직임 시작 여부 및 게임오버 여부
 
         const interval = setInterval(() => {
             console.log("moving...");
@@ -43,7 +56,7 @@ export function useSnakeGame() {
 
         // 움직일때마다 새 타이머 설정
         return () => clearInterval(interval);
-    }, [isMoving, moveSnakeHandler]);
+    }, [isMoving, gameOver, moveSnakeHandler]);
 
     // 뱀의 길이 업데이트
     useEffect(() => {
@@ -70,7 +83,7 @@ export function useSnakeGame() {
          * @param e 입력받은 키보드 이벤트
          */
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (inputLockedRef.current) return; // 입력 잠금여부 확인
+            if (gameOver || inputLockedRef.current) return; // 입력 잠금여부 확인
 
             /** 입력키에 따른 방향 할당 */
             const newDirection = {
@@ -94,7 +107,7 @@ export function useSnakeGame() {
         // 키 입력 감지
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [isMoving]);
+    }, [isMoving, gameOver]);
 
     return {
         snake,
@@ -104,6 +117,6 @@ export function useSnakeGame() {
         score,
         setScore,
         gameOver,
-        setGameOver,
+        handleReset,
     };
 }
