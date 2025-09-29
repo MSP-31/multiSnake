@@ -1,14 +1,5 @@
 import {useEffect, useRef} from "react";
-
-type Position = {
-    x: number;
-    y: number;
-};
-
-type GameCanvasProps = {
-    snake: Position[];
-    food: Position;
-};
+import type {GameCanvasProps} from "@/types";
 
 export default function GameCanvas({snake, food}: GameCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null); // 캔버스 DOM을 참조하기 위한 Hook
