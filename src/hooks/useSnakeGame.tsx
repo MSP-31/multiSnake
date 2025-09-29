@@ -6,6 +6,7 @@ export function useSnakeGame() {
     const [snake, setSnake] = useState([{x: 5, y: 5}]);
     const [food, setFood] = useState({x: 10, y: 10});
     const [score, setScore] = useState(0);
+    const [isMoving, setIsMoving] = useState(false); // 움직임 시작 여부
     const directionRef = useRef<Direction>("right"); // 입력값
     const inputLockedRef = useRef(false); // 입력 지연
     const snakeLengthRef = useRef(snake.length); // 뱀 길이
@@ -39,13 +40,15 @@ export function useSnakeGame() {
 
     // 다음 위치 계산후 상태 업데이트
     useEffect(() => {
+        if (!isMoving) return; // 움직임 시작 여부
+
         const interval = setInterval(() => {
             moveSnake(); // 실제
         }, 100); //100ms
 
         // 움직일때마다 새 타이머 설정
         return () => clearInterval(interval);
-    }, [moveSnake]);
+    }, [isMoving, moveSnake]);
 
     // 뱀의 길이 업데이트
     useEffect(() => {
@@ -88,6 +91,8 @@ export function useSnakeGame() {
                 directionRef.current = newDirection as Direction;
                 inputLockedRef.current = true; // 입력지연
                 setTimeout(() => (inputLockedRef.current = false), 100); // 100ms 잠금
+
+                if (!isMoving) setIsMoving(true); // 움직임 시작
             }
         };
 
