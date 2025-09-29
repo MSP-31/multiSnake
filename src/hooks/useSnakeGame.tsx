@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from "react";
-
-type Direction = "up" | "down" | "left" | "right";
+import type {Direction} from "@/types";
+import {moveSnake} from "@/utils/game/movement";
 
 export function useSnakeGame() {
     const [snake, setSnake] = useState([{x: 5, y: 5}]);
@@ -8,47 +8,42 @@ export function useSnakeGame() {
     const [score, setScore] = useState(0);
     const [isMoving, setIsMoving] = useState(false); // 움직임 시작 여부
     const directionRef = useRef<Direction>("right"); // 입력값
+    const [gameOver, setGameOver] = useState(false); // 게임 종료 여부
     const inputLockedRef = useRef(false); // 입력 지연
     const snakeLengthRef = useRef(snake.length); // 뱀 길이
 
+    const width = 25;
+    const height = 25;
+
     /** 뱀의 움직임 */
-    const moveSnake = useCallback(() => {
-        setSnake((prevSnake) => {
-            const head = prevSnake[prevSnake.length - 1]; // 현재 머리위치
-            let newHead;
+    const moveSnakeHandler = useCallback(() => {
+        const {newSnake, newFood, ateFood, gameOver} = moveSnake(snake, directionRef.current, food, width, height);
 
-            switch (directionRef.current) {
-                case "up":
-                    newHead = {x: head.x, y: head.y - 1};
-                    break;
-                case "down":
-                    newHead = {x: head.x, y: head.y + 1};
-                    break;
-                case "left":
-                    newHead = {x: head.x - 1, y: head.y};
-                    break;
-                case "right":
-                    newHead = {x: head.x + 1, y: head.y};
-                    break;
-            }
+        if (gameOver) {
+            setIsMoving(false);
+            return;
+        }
 
-            const newSnake = [...prevSnake, newHead]; // 기존 몸통에 머리 붙이기
-            newSnake.shift(); // 꼬리 제거 [배열의 첫번째 요소 제거]
-            return newSnake;
-        });
-    }, [directionRef]);
+        setSnake(newSnake);
+
+        if (ateFood && newFood) {
+            setFood(newFood);
+            setScore((prev) => prev + 1);
+        }
+    }, [snake, food]);
 
     // 다음 위치 계산후 상태 업데이트
     useEffect(() => {
-        if (!isMoving) return; // 움직임 시작 여부
+        if (!isMoving) setIsMoving(true); // 움직임 시작 여부
 
         const interval = setInterval(() => {
-            moveSnake(); // 실제
+            console.log("moving...");
+            moveSnakeHandler();
         }, 100); //100ms
 
         // 움직일때마다 새 타이머 설정
         return () => clearInterval(interval);
-    }, [isMoving, moveSnake]);
+    }, [isMoving, moveSnakeHandler]);
 
     // 뱀의 길이 업데이트
     useEffect(() => {
@@ -99,7 +94,7 @@ export function useSnakeGame() {
         // 키 입력 감지
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, []);
+    }, [isMoving]);
 
     return {
         snake,
@@ -108,5 +103,7 @@ export function useSnakeGame() {
         setFood,
         score,
         setScore,
+        gameOver,
+        setGameOver,
     };
 }
