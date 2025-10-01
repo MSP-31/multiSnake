@@ -13,6 +13,21 @@ export default function GameCanvas({snake, food}: GameCanvasProps) {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height); // 화면 초기화
 
+        // 격자무늬 그리기
+        const gridSize = 20;
+        const numCols = canvas.width / gridSize;
+        const numRows = canvas.height / gridSize;
+
+        for (let i = 0; i < numCols; i++) {
+            for (let j = 0; j < numRows; j++) {
+                // (i + j)가 짝수/홀수인지에 따라 색상을 번갈아 칠합니다.
+                ctx.fillStyle = (i + j) % 2 === 0 ? "#1e1e1e" : "#121212";
+                ctx.fillRect(i * gridSize, j * gridSize, gridSize, gridSize);
+            }
+        }
+
+        // --- 기존 그리기 코드 ---
+
         ctx.fillStyle = "green"; // 뱀 색상 설정
         snake.forEach((segment) => {
             ctx.fillRect(segment.x * 20, segment.y * 20, 20, 20); // 뱀의 각 몸통을 그리기
@@ -27,7 +42,7 @@ export default function GameCanvas({snake, food}: GameCanvasProps) {
             ref={canvasRef} // 캔버스 참조 연결
             width={500} // 캔버스 너비
             height={500} // 캔버스 높이
-            style={{border: "1px solid white", backgroundColor: "black"}} // 스타일 설정
+            style={{border: "1px solid white"}} // 스타일 설정 (배경색은 canvas에서 직접 그리므로 제거)
         />
     );
 }
