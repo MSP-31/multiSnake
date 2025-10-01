@@ -8,8 +8,6 @@ export default function Game() {
     const {snake, food, gameOver, handleReset, score} = useSnakeGame();
     const navigate = useNavigate();
 
-    // 최고 점수는 localStorage에서 가져오거나, 없으면 0으로 시작합니다.
-    // 실제 구현에서는 useSnakeGame 훅으로 옮기는 것이 좋습니다.
     const highScore = localStorage.getItem("snakeHighScore") || 0;
 
     return (
@@ -24,7 +22,6 @@ export default function Game() {
                 </div>
             </div>
             <GameCanvas snake={snake} food={food} />
-            {/* 조작법은 필요하다면 여기에 다시 추가할 수 있습니다. */}
             {gameOver && <GameOverModal onRestart={handleReset} onGoToMain={() => navigate("/")} />}
         </div>
     );
