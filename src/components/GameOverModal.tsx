@@ -9,7 +9,7 @@ export default function GameOverModal({onRestart}: GameOverModalProps) {
         <div style={overlayStyle}>
             <div style={modalStyle}>
                 <h2>💥 Game Over 💥</h2>
-                <button onClick={onRestart} style={buttonStyle}>
+                <button onClick={onRestart} autoFocus style={buttonStyle}>
                     다시 시작하기
                 </button>
             </div>
