@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import type {Direction} from "@/types";
 import {moveSnake} from "@/utils/game/movement";
+import {playEatSound, playCrashSound} from "@/utils/sound";
 
 export function useSnakeGame() {
     const [snake, setSnake] = useState([{x: 5, y: 5}]);
@@ -32,6 +33,7 @@ export function useSnakeGame() {
         const {newSnake, newFood, ateFood, gameOver} = moveSnake(snake, directionRef.current, food, width, height);
 
         if (gameOver) {
+            playCrashSound();
             setIsMoving(false);
             setGameOver(true);
             return;
@@ -40,6 +42,7 @@ export function useSnakeGame() {
         setSnake(newSnake);
 
         if (ateFood && newFood) {
+            playEatSound();
             setFood(newFood);
             setScore((prev) => prev + 1);
         }
