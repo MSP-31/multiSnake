@@ -1,16 +1,17 @@
 import {useNavigate} from "react-router-dom";
-import StartButton from "@/components/StartButton";
+import styles from "./Home.module.css";
 
 export default function Home() {
     const navigate = useNavigate();
-    const handleStart = () => {
-        navigate("/game");
-    };
 
     return (
-        <div>
-            <h1>홈 화면</h1>
-            <StartButton onClick={handleStart} />
+        <div className="home-container">
+            <h1 className="home-title">🐍Multi Snake🍎</h1>
+            <div className={styles.buttonGroup}>
+                <button onClick={() => navigate("/game")}>싱글 플레이</button>
+                <button onClick={() => navigate("/multiplayer")}>멀티 플레이</button>
+                <button onClick={() => navigate("/settings")}>설정</button>
+            </div>
         </div>
     );
 }

@@ -1,0 +1,60 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.gameHeader {
+    display: flex;
+    align-items: center;
+    width: 500px; /* GameCanvas 너비와 맞춤 */
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+}
+
+.scoreDisplay {
+    display: flex;
+    gap: 15px;
+    font-size: 1.2em;
+}
+
+.infoPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 200px; /* 정보 패널 너비 고정 */
+    text-align: left; /* 정보 패널 내 텍스트는 왼쪽 정렬 */
+}
+
+.scoreBoard {
+    background-color: #1a1a1a;
+    border: 1px solid #535bf2;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 1.2em;
+}
+
+.scoreBoard p {
+    margin: 0;
+    padding: 5px 0;
+}
+
+.controls {
+    background-color: #1a1a1a;
+    border: 1px solid #535bf2;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.controls h3 {
+    margin-top: 0;
+}
+
+.controls p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #aaa;
+}
