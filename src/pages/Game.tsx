@@ -25,7 +25,7 @@ export default function Game() {
             </div>
             <GameCanvas snake={snake} food={food} />
             {/* 조작법은 필요하다면 여기에 다시 추가할 수 있습니다. */}
-            {gameOver && <GameOverModal onRestart={handleReset} />}
+            {gameOver && <GameOverModal onRestart={handleReset} onGoToMain={() => navigate("/")} />}
         </div>
     );
 }
