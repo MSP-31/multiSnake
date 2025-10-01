@@ -21,6 +21,12 @@
     border: 1px solid #535bf2; /* 테두리 추가로 통일성 부여 */
 }
 
+.scoreText {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
 .buttonGroup {
     margin-top: 25px;
     display: flex;

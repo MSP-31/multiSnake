@@ -21,7 +21,7 @@ export default function Game() {
                 </div>
             </div>
             <GameCanvas snake={snake} food={food} />
-            {gameOver && <GameOverModal onRestart={handleReset} onGoToMain={() => navigate("/")} />}
+            {gameOver && <GameOverModal score={score} onRestart={handleReset} onGoToMain={() => navigate("/")} />}
         </div>
     );
 }
