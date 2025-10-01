@@ -5,10 +5,8 @@ import styles from "./Game.module.css";
 import {useNavigate} from "react-router-dom";
 
 export default function Game() {
-    const {snake, food, gameOver, handleReset, score} = useSnakeGame();
+    const {snake, food, gameOver, handleReset, score, highScore} = useSnakeGame();
     const navigate = useNavigate();
-
-    const highScore = localStorage.getItem("snakeHighScore") || 0;
 
     return (
         <div className={styles.container}>
@@ -18,7 +16,8 @@ export default function Game() {
                 <div className={styles.scoreDisplay}>
                     <span>점수: {score}</span>
                     <span>/</span>
-                    <span>최고점수: {highScore}</span>
+                    <span>최고점수: {score > highScore ? score : highScore}</span>
+                    {score > highScore && <span className={styles.newRecord}>🔥 New Record!</span>}
                 </div>
             </div>
             <GameCanvas snake={snake} food={food} />

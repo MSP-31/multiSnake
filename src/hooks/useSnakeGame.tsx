@@ -12,6 +12,10 @@ export function useSnakeGame() {
     const [gameOver, setGameOver] = useState(false); // 게임 종료 여부
     const inputLockedRef = useRef(false); // 입력 지연
     const snakeLengthRef = useRef(snake.length); // 뱀 길이
+    const [highScore, setHighScore] = useState(() => {
+        const stored = localStorage.getItem("highScore");
+        return stored ? parseInt(stored) : 0;
+    });
 
     const width = 25;
     const height = 25;
@@ -36,6 +40,10 @@ export function useSnakeGame() {
             playCrashSound();
             setIsMoving(false);
             setGameOver(true);
+            if (score > highScore) {
+                localStorage.setItem("highScore", score.toString());
+                setHighScore(score);
+            }
             return;
         }
 
@@ -46,14 +54,13 @@ export function useSnakeGame() {
             setFood(newFood);
             setScore((prev) => prev + 1);
         }
-    }, [snake, food]);
+    }, [snake, food, score, highScore]);
 
     // 다음 위치 계산후 상태 업데이트
     useEffect(() => {
         if (!isMoving || gameOver) return; // 움직임 시작 여부 및 게임오버 여부
 
         const interval = setInterval(() => {
-            console.log("moving...");
             moveSnakeHandler();
         }, 100); //100ms
 
@@ -121,5 +128,6 @@ export function useSnakeGame() {
         setScore,
         gameOver,
         handleReset,
+        highScore,
     };
 }
