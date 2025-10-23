@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 import type {Direction} from "@/types";
 import {moveSnake} from "@/utils/game/movement";
+import {playEatSound, playCrashSound} from "@/utils/sound";
 
 export function useSnakeGame() {
     const [snake, setSnake] = useState([{x: 5, y: 5}]);
@@ -9,8 +10,11 @@ export function useSnakeGame() {
     const [isMoving, setIsMoving] = useState(false); // 움직임 시작 여부
     const directionRef = useRef<Direction>("right"); // 입력값
     const [gameOver, setGameOver] = useState(false); // 게임 종료 여부
-    const inputLockedRef = useRef(false); // 입력 지연
     const snakeLengthRef = useRef(snake.length); // 뱀 길이
+    const [highScore, setHighScore] = useState(() => {
+        const stored = localStorage.getItem("highScore");
+        return stored ? parseInt(stored) : 0;
+    });
 
     const width = 25;
     const height = 25;
@@ -23,7 +27,6 @@ export function useSnakeGame() {
         setIsMoving(false);
         setGameOver(false);
         directionRef.current = "right";
-        inputLockedRef.current = false;
         snakeLengthRef.current = snake.length;
     };
 
@@ -32,25 +35,30 @@ export function useSnakeGame() {
         const {newSnake, newFood, ateFood, gameOver} = moveSnake(snake, directionRef.current, food, width, height);
 
         if (gameOver) {
+            playCrashSound();
             setIsMoving(false);
             setGameOver(true);
+            if (score > highScore) {
+                localStorage.setItem("highScore", score.toString());
+                setHighScore(score);
+            }
             return;
         }
 
         setSnake(newSnake);
 
         if (ateFood && newFood) {
+            playEatSound();
             setFood(newFood);
             setScore((prev) => prev + 1);
         }
-    }, [snake, food]);
+    }, [snake, food, score, highScore]);
 
     // 다음 위치 계산후 상태 업데이트
     useEffect(() => {
         if (!isMoving || gameOver) return; // 움직임 시작 여부 및 게임오버 여부
 
         const interval = setInterval(() => {
-            console.log("moving...");
             moveSnakeHandler();
         }, 100); //100ms
 
@@ -83,7 +91,7 @@ export function useSnakeGame() {
          * @param e 입력받은 키보드 이벤트
          */
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (gameOver || inputLockedRef.current) return; // 입력 잠금여부 확인
+            if (gameOver) return; // 입력 잠금여부 확인
 
             /** 입력키에 따른 방향 할당 */
             const newDirection = {
@@ -97,8 +105,6 @@ export function useSnakeGame() {
             // 뱀의 길이가 1일때는 모든 방향 전환 허용
             if (newDirection && (snakeLengthRef.current === 1 || !isOpposite(newDirection, directionRef.current))) {
                 directionRef.current = newDirection as Direction;
-                inputLockedRef.current = true; // 입력지연
-                setTimeout(() => (inputLockedRef.current = false), 100); // 100ms 잠금
 
                 if (!isMoving) setIsMoving(true); // 움직임 시작
             }
@@ -118,5 +124,6 @@ export function useSnakeGame() {
         setScore,
         gameOver,
         handleReset,
+        highScore,
     };
 }
